@@ -267,8 +267,8 @@
   // ───────── 계좌 ─────────
   function renderAccount() {
     const group = (title, list) => `
-      <div class="acc-group open">
-        <button type="button" class="acc-head" data-action="toggle-acc" aria-expanded="true"><span>${esc(title)}</span>${ICON.chevron}</button>
+      <div class="acc-group">
+        <button type="button" class="acc-head" data-action="toggle-acc" aria-expanded="false"><span>${esc(title)}</span>${ICON.chevron}</button>
         <ul class="acc-list">
           ${list
             .map(

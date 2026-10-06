@@ -11,16 +11,16 @@ window.WEDDING = {
     firstName: "강빈",
     phone: "010-2048-6285",
     order: "아들", // 장남, 차남, 아들 등
-    father: { name: "이명고", phone: "010-0000-0000", deceased: false }, // 고인이면 deceased: true
-    mother: { name: "김은화", phone: "010-0000-0000", deceased: false },
+    father: { name: "이명고", phone: "010-4550-6277", deceased: false }, // 고인이면 deceased: true
+    mother: { name: "김은화", phone: "010-8227-6277", deceased: false },
   },
   bride: {
     name: "안유림",
     firstName: "유림",
     phone: "010-4343-7509",
     order: "딸", // 장녀, 차녀, 딸 등
-    father: { name: "안상수", phone: "010-0000-0000", deceased: false },
-    mother: { name: "신선옥", phone: "010-0000-0000", deceased: false },
+    father: { name: "안상수", phone: "010-5310-1915", deceased: false },
+    mother: { name: "신선옥", phone: "010-7411-0881", deceased: false },
   },
 
   // ───────── 예식 일시 (한국 시간 기준, 24시간제) ─────────
@@ -60,14 +60,14 @@ window.WEDDING = {
       "images/gallery01.jpg",
       "images/gallery07.jpg",
       "images/gallery08.jpg",
-      "images/gallery09.jpg",
-      "images/gallery10.jpg",
-      "images/gallery11.jpg",
       "images/gallery12.jpg",
+      "images/gallery11.jpg",
+      "images/gallery10.jpg",
       "images/gallery03.jpg",
       "images/gallery04.jpg",
-      "images/gallery05.jpg",
+      "images/gallery09.jpg",
       "images/gallery06.jpg",
+      "images/gallery05.jpg",
       "images/gallery02.jpg",
     ],
   },
@@ -112,14 +112,14 @@ window.WEDDING = {
 너그러운 마음으로 양해 부탁드립니다.`,
   accounts: {
     groom: [
-      { relation: "신랑", name: "이강빈", bank: "신한은행", number: "110-000-000000", kakaopay: "" },
-      { relation: "아버지", name: "이명고", bank: "우리은행", number: "110-000-000000", kakaopay: "" },
-      { relation: "어머니", name: "김은화", bank: "국민은행", number: "110-000-000000", kakaopay: "" },
+      { relation: "신랑", name: "이강빈", bank: "국민은행", number: "244002-04-233624", kakaopay: "" },
+      { relation: "아버지", name: "이명고", bank: "국민은행", number: "041210-66-2275", kakaopay: "" },
+      { relation: "어머니", name: "김은화", bank: "국민은행", number: "041210-66-4812", kakaopay: "" },
     ],
     bride: [
       { relation: "신부", name: "안유림", bank: "국민은행", number: "002802-04-146540", kakaopay: "" },
-      { relation: "아버지", name: "안상수", bank: "농협은행", number: "110-000-000000", kakaopay: "" },
-      { relation: "어머니", name: "신선옥", bank: "기업은행", number: "110-000-000000", kakaopay: "" },
+      { relation: "아버지", name: "안상수", bank: "하나은행", number: "139-910350-53107", kakaopay: "" },
+      { relation: "어머니", name: "신선옥", bank: "IM뱅크", number: "02307-512439-001", kakaopay: "" },
     ],
   },
 
