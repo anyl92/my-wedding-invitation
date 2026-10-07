@@ -252,6 +252,7 @@
     lb.hidden = false;
     document.body.classList.add('no-scroll');
     showLightbox();
+    pushPopup(hideLightbox);
   }
   function showLightbox() {
     const imgs = C.images.gallery;
@@ -259,10 +260,31 @@
     $('.lb-img').src = imgs[lbIndex];
     $('.lb-count').textContent = `${lbIndex + 1} / ${imgs.length}`;
   }
-  function closeLightbox() {
+  function hideLightbox() {
     $('#lightbox').hidden = true;
     document.body.classList.remove('no-scroll');
   }
+  const closeLightbox = () => closePopup(hideLightbox);
+
+  // ───────── 뒤로가기로 팝업 닫기 ─────────
+  // 팝업(사진 크게 보기, 연락하기 등)을 열 때 히스토리를 한 칸 쌓아 두면
+  // 휴대폰 뒤로가기가 페이지를 벗어나는 대신 팝업만 닫는다.
+  let popupHide = null;
+  function pushPopup(hide) {
+    if (popupHide) return (popupHide = hide); // 이미 한 칸 쌓여 있으면 재사용
+    popupHide = hide;
+    history.pushState({ popup: true }, '');
+  }
+  function closePopup(hide) {
+    if (popupHide) history.back(); // popstate 에서 닫힘
+    else hide();
+  }
+  window.addEventListener('popstate', () => {
+    if (!popupHide) return;
+    const hide = popupHide;
+    popupHide = null;
+    hide();
+  });
 
   // ───────── 계좌 ─────────
   function renderAccount() {
@@ -378,11 +400,13 @@
       </div>`;
     m.hidden = false;
     document.body.classList.add('no-scroll');
+    pushPopup(hideModal);
   }
-  function closeModal() {
+  function hideModal() {
     $('#modal').hidden = true;
     document.body.classList.remove('no-scroll');
   }
+  const closeModal = () => closePopup(hideModal);
 
   // ───────── 배경음악 ─────────
   function initBgm() {
@@ -447,6 +471,14 @@
     if (Math.abs(dx) > 40) { lbIndex += dx < 0 ? 1 : -1; showLightbox(); }
     touchX = null;
   });
+
+  // ───────── 확대 · 사진 저장 메뉴 막기 ─────────
+  // iOS 사파리는 viewport 의 user-scalable=no 를 무시하므로 핀치 제스처를 직접 막는다.
+  document.addEventListener('gesturestart', (e) => e.preventDefault());
+  document.addEventListener('touchmove', (e) => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
+  // 사진 꾹 누르기(저장/공유 메뉴)와 끌어서 저장 막기
+  document.addEventListener('contextmenu', (e) => { if (e.target.closest('img, .g-item')) e.preventDefault(); });
+  document.addEventListener('dragstart', (e) => { if (e.target.tagName === 'IMG') e.preventDefault(); });
 
   // ───────── 스크롤 애니메이션 ─────────
   function initFade() {

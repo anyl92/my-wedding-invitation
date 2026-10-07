@@ -18,7 +18,7 @@
 }
 
 * { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; touch-action: pan-x pan-y; } /* 핀치·더블탭 확대 막기 (스크롤은 그대로) */
 body {
   margin: 0;
   background: var(--bg-outer);
@@ -32,6 +32,12 @@ body {
 }
 body.no-scroll { overflow: hidden; }
 img { display: block; max-width: 100%; }
+
+/* 글자 꾹 눌러 선택(블록) 막기 + 사진 꾹 눌러 저장 메뉴 막기 */
+body { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }
+img { -webkit-user-drag: none; -webkit-touch-callout: none; }
+/* 복사가 필요한 곳은 선택 허용: 계좌번호, 주소, 전화번호 */
+.acc-num, .venue-addr, .venue-tel { -webkit-user-select: text; user-select: text; -webkit-touch-callout: default; }
 button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; -webkit-text-stroke: inherit; }
 a { color: inherit; text-decoration: none; }
 p { margin: 0; }
