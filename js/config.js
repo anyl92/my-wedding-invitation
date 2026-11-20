@@ -58,27 +58,39 @@ window.WEDDING = {
     ending: "images/ending.jpg",
     gallery: [
       "images/gallery01.jpg",
-      "images/gallery07.jpg",
-      "images/gallery08.jpg",
-      "images/gallery12.jpg",
-      "images/gallery11.jpg",
-      "images/gallery10.jpg",
+      "images/gallery02.jpg",
       "images/gallery03.jpg",
       "images/gallery04.jpg",
-      "images/gallery09.jpg",
-      "images/gallery06.jpg",
       "images/gallery05.jpg",
-      "images/gallery02.jpg",
+      "images/gallery06.jpg",
+      "images/gallery07.jpg",
+      "images/gallery08.jpg",
+      "images/gallery09.jpg",
+      "images/gallery10.jpg",
+      "images/gallery11.jpg",
+      "images/gallery12.jpg",
+      "images/gallery13.jpg",
+      "images/gallery14.jpg",
+      "images/gallery15.jpg",
+      "images/gallery16.jpg",
+      "images/gallery17.jpg",
+      "images/gallery18.jpg",
+      "images/gallery19.jpg",
+      "images/gallery20.jpg",
+      "images/gallery21.jpg",
+      "images/gallery22.jpg",
+      "images/gallery23.jpg",
+      "images/gallery24.jpg",
     ],
   },
-  galleryInitialCount: 9, // '더보기' 누르기 전에 보이는 사진 수
+  galleryInitialCount: 12, // '더보기' 누르기 전에 보이는 사진 수
 
   // ───────── 오시는 길 ─────────
   venue: {
     name: "더리버사이드호텔",
     hall: "노벨라홀, 지하 1층(LL층)",
     address: "서울 서초구 강남대로107길 6",
-    tel: "02-6710-1100",
+    // tel: "02-6710-1100",
     // 좌표: 네이버/카카오 지도에서 장소 검색 → 공유 링크나 '좌표 복사'로 확인
     lat: 37.5185714,
     lng: 127.0180161,
@@ -101,6 +113,7 @@ window.WEDDING = {
         // { dot: "#3b9f37", text: "지선버스 : 3011, 4312" },
         // "",
         "발렛이 필수이며, 진입 및 출차가 다소 혼잡합니다.",
+        "발렛 비용은 저희가 부담하나, 시간이 지연될 수 있기에",
         "지하철 등 대중교통 이용을 적극 권장해 드립니다 🩷",
       ],
     },
@@ -121,6 +134,13 @@ window.WEDDING = {
       { relation: "아버지", name: "안상수", bank: "하나은행", number: "139-910350-53107", kakaopay: "" },
       { relation: "어머니", name: "신선옥", bank: "IM뱅크", number: "02307-512439-001", kakaopay: "" },
     ],
+  },
+
+  // ───────── 방명록 ─────────
+  guestbook: {
+    // 구글 Apps Script 웹 앱 주소 (설정 방법: docs/guestbook.gs 맨 위) — 비워두면 방명록이 숨겨집니다
+    url: "",
+    initialCount: 5, // '더보기' 누르기 전에 보이는 글 수
   },
 
   // ───────── 마지막 문구 ─────────

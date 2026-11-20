@@ -140,6 +140,9 @@ p { margin: 0; }
   font-family: var(--script); font-size: 30px; line-height: 28px; text-align: left;
   color: #1a1a1a; -webkit-text-stroke: 0;
 }
+.banner-script.right {transform: translateX(80px) rotate(-6deg)}
+#banner1 .banner-frame img { object-position: center 58%; }
+#banner2 .banner-frame img { object-position: center 68%; }
 
 /* ───────── 달력 ───────── */
 #calendar { gap: 32px; }
@@ -208,6 +211,26 @@ p { margin: 0; }
 .gallery-grid.collapsed .extra { display: none; }
 .more-btn { display: inline-flex; align-items: center; gap: 8px; margin-top: -20px; padding: 12px; color: var(--label-2); font-size: 14px; }
 
+/* ───────── 방명록 ───────── */
+.gb-list { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 330px; margin: 0; padding: 0; list-style: none; text-align: left; }
+.gb-item { padding: 14px 16px; border-radius: 8px; background: var(--card); }
+.gb-head { display: flex; align-items: center; gap: 8px; }
+.gb-name { font-weight: 400; color: var(--label-1); }
+.gb-date { flex: 1; font-size: 12px; color: var(--label-3); }
+.gb-del { padding: 2px; color: var(--label-4); }
+.gb-del svg { width: 16px; height: 16px; }
+.gb-msg { margin-top: 6px; color: var(--label-2); overflow-wrap: anywhere; }
+.gb-empty { padding: 20px 0; text-align: center; color: var(--label-3); }
+.gb-form { display: flex; flex-direction: column; gap: 10px; }
+.gb-form input, .gb-form textarea {
+  width: 100%; padding: 12px 14px; border: 1px solid var(--btn-border); border-radius: 8px;
+  background: var(--card); color: var(--label-1); font: inherit; font-size: 16px; /* 16px 미만이면 iOS가 확대함 */
+  -webkit-user-select: text; user-select: text; resize: none;
+}
+.gb-form input:focus, .gb-form textarea:focus { outline: none; border-color: var(--label-3); }
+.gb-form .btn-outline { margin-top: 6px; }
+.gb-form .btn-outline:disabled { opacity: 0.5; }
+
 .lightbox {
   position: fixed; inset: 0; z-index: 100;
   display: flex; align-items: center; justify-content: center;
@@ -256,12 +279,11 @@ p { margin: 0; }
 
 /* ───────── 엔딩 ───────── */
 .ending { position: relative; display: flex; flex-direction: column; justify-content: flex-end; width: 100%; aspect-ratio: 393 / 590; padding-top: 60px; overflow: hidden; }
-.ending-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+.ending-photo { position: absolute; left: 0; bottom: 0; width: 100%; height: 120%; object-fit: cover; object-position: 30% bottom; pointer-events: none; }  /* height가 클수록 위쪽이 더 잘려요, 첫 번째 %가 작을수록 사진이 오른쪽으로 밀려요 */
 .ending-card {
   position: relative; z-index: 1; display: flex; flex-direction: column;
-  margin: 0 24px 24px; padding: 20px; border-radius: 4px;
-  background: rgba(40, 40, 40, 0.35); box-shadow: 0 8px 16px -8px rgba(0, 0, 0, 0.12);  /* 마지막 숫자(0.35)가 진하기: 낮출수록 사진이 더 잘 보여요 */
-  -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+  margin: 24px; padding: 20px; border-radius: 4px;
+  background: rgba(40, 40, 40, 0.3); box-shadow: 0 8px 16px -8px rgba(0, 0, 0, 0.12);  /* 마지막 숫자(0.35)가 진하기: 낮출수록 사진이 더 잘 보여요 */
   color: #fff; font-weight: 500; text-align: center; text-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
 }
 
