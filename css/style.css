@@ -74,25 +74,33 @@ p { margin: 0; }
  * 표지 길이 조절
  *  --cover-ratio : 표지 전체 비율 (가로 / 세로). 세로 숫자를 키우면 표지가 길어집니다.
  *  --photo-ratio : 표지 사진 원본 비율 (가로 / 세로). 2:3 세로 사진이면 2 / 3
- *  사진 아래로 늘어난 부분은 같은 사진을 흐리게 깔아 자연스럽게 이어지고, 날짜 띠는 그 위에 놓입니다.
+ *  --photo-lift : 사진을 위로 올리는 정도. 위쪽 하늘이 그만큼 잘리고, 아래(치마)가 날짜 띠 위로 올라옵니다. 0이면 원래 위치
+ *  --photo-fade : 사진 아래 끝이 흐려지는 구간 (사진 높이 대비 %). 작을수록 사진이 더 선명하게 끝까지 보입니다.
+ *  --frame-gap : 표지 위·아래 끝과 테두리(이름 띠·날짜 띠) 사이 간격. 위아래 같은 값이 들어갑니다.
+ *  사진 아래로 늘어난 부분은 사진 아래쪽을 거울처럼 뒤집어 흐리게 깔아 자연스럽게 이어지고, 날짜 띠는 그 위에 놓입니다.
  */
 .cover {
-  --cover-ratio: 393 / 670;
+  --cover-ratio: 394 / 670;
   --photo-ratio: 2 / 3;
+  --photo-lift: 5.5cqi;
+  --photo-fade: 0.4%;
+  --frame-gap: 6cqi;
   position: relative; width: 100%; aspect-ratio: var(--cover-ratio); overflow: hidden;
   color: #fff; container-type: inline-size; -webkit-text-stroke: 0; background: #5d6b4f;
 }
 .cover-bg {
-  position: absolute; top: -25%; left: -25%; width: 150%; height: 150%; max-width: none; object-fit: cover; object-position: bottom;
+  /* 사진 바로 아래에 위아래로 뒤집어 붙여서, 사진 아래 끝과 같은 색으로 이어지게 한다 (양옆·위는 블러 번짐을 가리려고 조금 크게) */
+  position: absolute; top: calc(100cqi / (var(--photo-ratio)) - var(--photo-lift) - 6cqi); left: -10%; width: 120%; max-width: none;
+  aspect-ratio: var(--photo-ratio); object-fit: cover; transform: scaleY(-1);
   filter: blur(24px) brightness(0.9);
 }
 .cover-photo {
-  position: absolute; top: 0; left: 0; width: 100%; aspect-ratio: var(--photo-ratio); object-fit: cover;
-  -webkit-mask-image: linear-gradient(to bottom, #000 92%, transparent);
-  mask-image: linear-gradient(to bottom, #000 92%, transparent);
+  position: absolute; top: calc(-1 * var(--photo-lift)); left: 0; width: 100%; aspect-ratio: var(--photo-ratio); object-fit: cover;
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - var(--photo-fade)), transparent);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - var(--photo-fade)), transparent);
 }
 .cover-frame {
-  position: absolute; top: 15.27cqi; bottom: 6cqi; left: 8.14cqi; right: 8.14cqi;
+  position: absolute; top: var(--frame-gap); bottom: var(--frame-gap); left: 8.14cqi; right: 8.14cqi;
   display: flex; flex-direction: column; overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.6); border-radius: 5.09cqi;
 }
@@ -127,7 +135,7 @@ p { margin: 0; }
 #intro .btn-outline { margin-top: 0; }
 
 /* ───────── 중간 사진 + 손글씨 ───────── */
-.banner { padding: 30px 16px 80px; }
+.banner { padding: 30px 16px; }
 .banner-inner { display: flex; flex-direction: column; align-items: center; }
 .banner-frame {
   width: 250px; max-width: 90%; padding: 6px;
@@ -231,6 +239,28 @@ p { margin: 0; }
 .gb-form .btn-outline { margin-top: 6px; }
 .gb-form .btn-outline:disabled { opacity: 0.5; }
 
+/* ───────── 사진 이벤트 ───────── */
+.pe-msg { color: var(--label-2); }
+.pe-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.pe-grid:empty { display: none; }
+.pe-thumb { position: relative; aspect-ratio: 1; overflow: hidden; border-radius: 6px; background: var(--border); }
+.pe-thumb img, .pe-thumb video { width: 100%; height: 100%; object-fit: cover; }
+.pe-badge {
+  position: absolute; left: 6px; bottom: 6px; display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; border-radius: 50%; background: rgba(0, 0, 0, 0.55); color: #fff; pointer-events: none;
+}
+.pe-del {
+  position: absolute; top: 4px; right: 4px; display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; border-radius: 50%; background: rgba(0, 0, 0, 0.55); color: #fff;
+}
+.pe-del svg { width: 14px; height: 14px; }
+.pe-add {
+  display: flex; align-items: center; justify-content: center; gap: 6px; padding: 14px;
+  border: 1px dashed var(--label-4); border-radius: 8px; color: var(--label-2); cursor: pointer;
+}
+.pe-status { min-height: 1em; font-size: 13px; color: var(--label-3); text-align: center; white-space: pre-line; word-break: break-all; }
+.pe-status:empty { display: none; }
+
 .lightbox {
   position: fixed; inset: 0; z-index: 100;
   display: flex; align-items: center; justify-content: center;
@@ -238,10 +268,10 @@ p { margin: 0; }
 }
 .lb-img { max-width: 100%; max-height: 82vh; object-fit: contain; user-select: none; }
 .lb-close { position: absolute; top: calc(16px + env(safe-area-inset-top, 0px)); right: 16px; padding: 8px; }
-.lb-nav { position: absolute; top: 50%; transform: translateY(-50%); padding: 16px 8px; opacity: 0.8; }
+.lb-nav { position: absolute; display: flex; bottom: calc(6.5px + env(safe-area-inset-bottom, 0px)); padding: 16px 8px; opacity: 0.8; } /* 아래 숫자(13 / 30)와 같은 높이: 버튼 높이 60px의 가운데 = 숫자 줄 가운데 */
 .lb-prev { left: 4px; }
 .lb-next { right: 4px; }
-.lb-count { position: absolute; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); font-size: 13px; opacity: 0.8; }
+.lb-count { position: absolute; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); font-size: 13px; line-height: 25px; opacity: 0.8; }
 
 /* ───────── 계좌 ───────── */
 .acc-msg { color: var(--label-2); }

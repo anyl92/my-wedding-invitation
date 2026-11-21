@@ -10,7 +10,7 @@ window.WEDDING = {
     name: "이강빈",
     firstName: "강빈",
     phone: "010-2048-6285",
-    order: "아들", // 장남, 차남, 아들 등
+    order: "아들",
     father: { name: "이명고", phone: "010-4550-6277", deceased: false }, // 고인이면 deceased: true
     mother: { name: "김은화", phone: "010-8227-6277", deceased: false },
   },
@@ -18,7 +18,7 @@ window.WEDDING = {
     name: "안유림",
     firstName: "유림",
     phone: "010-4343-7509",
-    order: "딸", // 장녀, 차녀, 딸 등
+    order: "딸",
     father: { name: "안상수", phone: "010-5310-1915", deceased: false },
     mother: { name: "신선옥", phone: "010-7411-0881", deceased: false },
   },
@@ -50,7 +50,7 @@ window.WEDDING = {
   // 사진 사이에 들어가는 손글씨 문구
   bannerPhrase: "Love story is beautiful,\nbut ours is my favorite",
 
-  // ───────── 사진 (images 폴더에 넣고 파일 이름만 바꾸세요) ─────────
+  // ───────── 사진 (images 폴더) ─────────
   images: {
     cover: "images/cover.jpg",
     middle1: "images/middle1-1.jpg",
@@ -96,8 +96,6 @@ window.WEDDING = {
     name: "더리버사이드호텔",
     hall: "노벨라홀, 지하 1층(LL층)",
     address: "서울 서초구 강남대로107길 6",
-    // tel: "02-6710-1100",
-    // 좌표: 네이버/카카오 지도에서 장소 검색 → 공유 링크나 '좌표 복사'로 확인
     lat: 37.5185714,
     lng: 127.0180161,
     mapImage: "", // 약도 이미지가 있으면 'images/map.png' 처럼 입력
@@ -115,9 +113,6 @@ window.WEDDING = {
     {
       title: "주차",
       lines: [
-        // { dot: "#0d347f", text: "간선버스 : 301, 342, 472" },
-        // { dot: "#3b9f37", text: "지선버스 : 3011, 4312" },
-        // "",
         "발렛이 필수이며, 진입 및 출차가 다소 혼잡합니다.",
         "발렛 비용은 저희가 부담하나, 시간이 지연될 수 있기에",
         "지하철 등 대중교통 이용을 적극 권장해 드립니다 🩷",
@@ -149,6 +144,20 @@ window.WEDDING = {
     initialCount: 5, // '더보기' 누르기 전에 보이는 글 수
   },
 
+  // ───────── 사진·동영상 받기 (구글 드라이브 폴더로 저장) ─────────
+  photoEvent: {
+    // 구글 Apps Script 웹 앱 주소 (설정 방법: docs/photo-upload.gs 맨 위) — 비워두면 숨겨집니다 (로컬에서는 미리보기로 보임)
+    url: "https://script.google.com/macros/s/AKfycbyzjYMQZPpwFSctg5fgZKjgCrTS-BU6ZlkpnvaIq2u8bwFs8aRcZFczDNNEWxCI55L7/exec",
+    enabled: true, // false 로 바꾸면 숨겨집니다
+    maxMB: 1024, // 한 파일 최대 크기 (docs/photo-upload.gs 의 MAX_MB 와 같게)
+    title: "사진 이벤트",
+    message: `결혼식 날 찍어주신 사진과 영상을 보내주세요.
+소중한 순간들을 오래 간직하겠습니다.
+
+신랑과 신부가 각각 가장 마음에 드는 사진을 골라
+작가님께 커피를 쏘겠습니다 ☕️`,
+  },
+
   // ───────── 마지막 문구 ─────────
   ending: {
     text: `기쁜 날에는 함께 웃고,
@@ -162,8 +171,7 @@ window.WEDDING = {
 
   // ───────── 공유 ─────────
   share: {
-    // 카카오톡 공유 버튼을 쓰려면 Kakao Developers의 JavaScript 키를 넣으세요 (README 참고)
-    kakaoAppKey: "",
+    kakaoAppKey: "", // 카카오톡 공유 버튼
     title: "이강빈 ♥ 안유림 결혼합니다",
     description: "2027년 2월 20일 토요일 낮 12시 20분\n더리버사이드호텔 노벨라홀",
     imageUrl: "https://anyl92.github.io/my-wedding-invitation/images/og.jpg", // 배포 후 대표 사진의 전체 주소 (https://...)

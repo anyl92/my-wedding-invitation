@@ -61,6 +61,10 @@
       '<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>',
     kakao:
       '<svg viewBox="0 0 18 18" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M9 1.4C4.5 1.4.8 4.3.8 7.9c0 2.3 1.5 4.3 3.8 5.4l-.8 2.9c-.1.2.2.4.4.3l3.3-2.2c.5.1 1 .1 1.5.1 4.5 0 8.2-2.9 8.2-6.5S13.5 1.4 9 1.4Z"/></svg>',
+    camera:
+      '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 8h3l1.5-2.5h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="3.5"/></svg>',
+    play: '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>',
+    plus: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>',
     music:
       '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg>',
   };
@@ -187,7 +191,7 @@
     const todayKst = Math.floor((Date.now() + KST) / DAY);
     const weddingDay = Math.floor(Date.UTC(D.year, D.month - 1, D.day) / DAY);
     const n = weddingDay - todayKst;
-    const names = `${esc(C.bride.firstName)}, ${esc(C.groom.firstName)}의 결혼식이`;
+    const names = `${esc(C.groom.firstName)}, ${esc(C.bride.firstName)}의 결혼식이`;
     $(".dday-text").innerHTML =
       n > 0 ? `${names} <em>${n}</em>일 남았습니다.` : n === 0 ? `${names} <em>오늘</em>입니다.` : `${names} <em>${-n}</em>일 지났습니다.`;
   }
@@ -283,7 +287,9 @@
   // 항목은 "images/a.jpg" 또는 { src, pos: "50% 30%", zoom: 1.2 } (썸네일 위치·확대)
   const gSrc = (g) => (typeof g === "string" ? g : g.src);
   const thumbStyle = (g) =>
-    typeof g === "string" ? "" : `object-position:${g.pos || "50% 50%"};transform-origin:${g.pos || "50% 50%"};transform:scale(${g.zoom || 1})`;
+    typeof g === "string"
+      ? ""
+      : `object-position:${g.pos || "50% 50%"};transform-origin:${g.pos || "50% 50%"};transform:scale(${g.zoom || 1})`;
   function renderGallery() {
     const imgs = C.images.gallery || [];
     if (!imgs.length) return $("#gallery").remove();
@@ -352,6 +358,8 @@
   // ───────── 방명록 ─────────
   // 글은 구글 시트에 쌓인다 (docs/guestbook.gs). 삭제해도 시트에는 '삭제됨' 표시만 남는다.
   const GB = C.guestbook || {};
+  // 로컬에서는 주소가 없어도 사진 받기 화면을 미리 볼 수 있게 한다 (전송은 주소를 넣어야 동작)
+  const IS_LOCAL = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
   let gbItems = [];
   let gbShown = 0;
 
@@ -365,6 +373,7 @@
     loadGuestbook();
   }
   async function gbRequest(body) {
+    if (!GB.url) throw new Error("guestbook.url 이 비어 있습니다.");
     const res = body
       ? await fetch(GB.url, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(body) })
       : await fetch(GB.url);
@@ -448,6 +457,154 @@
     }
   }
 
+  // ───────── 사진·동영상 받기 ─────────
+  // 하객이 고른 파일을 미리보기로 모았다가 한 번에 올린다. 파일은 8MB 조각으로 나눠 Apps Script 를 거쳐
+  // 구글 드라이브에 이어 붙인다 (docs/photo-upload.gs). 큰 동영상도 올릴 수 있다.
+  const PE = C.photoEvent || {};
+  const PE_MAX_MB = PE.maxMB || 1024;
+  const PE_CHUNK = 8 * 1024 * 1024; // 드라이브 이어올리기 조각은 256KB 의 배수여야 한다
+  let peFiles = []; // { file, url }
+  let peName = "";
+  let peBusy = false;
+
+  function renderPhotoEvent() {
+    if ((!PE.url && !IS_LOCAL) || !PE.enabled) return $("#photo-event").remove();
+    $("#photo-event").innerHTML = `
+      ${sectionTitle("PHOTO EVENT", PE.title || "사진 이벤트")}
+      <p class="pe-msg fade">${nl2br(PE.message)}</p>
+      <button type="button" class="btn-outline fade" data-action="pe-open">${ICON.camera}<span>사진 · 동영상 올리기</span></button>`;
+  }
+  function openPhotoEvent() {
+    openModal(`
+      <h3 class="modal-title">사진 · 동영상 올리기</h3>
+      <form class="gb-form" data-form="pe-upload">
+        <input name="name" maxlength="20" placeholder="이름" required autocomplete="name" value="${esc(peName)}">
+        <div class="pe-grid"></div>
+        <label class="pe-add">${ICON.plus}<span>사진 · 동영상 추가</span><input type="file" accept="image/*,video/*" multiple hidden></label>
+        <p class="pe-status"></p>
+        <button type="submit" class="btn-outline"></button>
+      </form>`);
+    paintPhotoEvent();
+  }
+  function paintPhotoEvent(status) {
+    const grid = $(".pe-grid");
+    if (!grid) return; // 업로드 중에 팝업을 닫은 경우
+    grid.innerHTML = peFiles
+      .map(
+        (p, i) => `
+        <div class="pe-thumb">
+          ${
+            p.file.type.startsWith("video/")
+              ? `<video src="${p.url}#t=0.1" muted playsinline preload="metadata"></video><span class="pe-badge">${ICON.play}</span>`
+              : `<img src="${p.url}" alt="">`
+          }
+          <button type="button" class="pe-del" data-action="pe-remove" data-i="${i}" aria-label="빼기"${peBusy ? " hidden" : ""}>${ICON.close}</button>
+        </div>`,
+      )
+      .join("");
+    $(".pe-add").hidden = peBusy;
+    $(".pe-status").textContent = status ?? (peFiles.length ? `${peFiles.length}개 선택됨` : "");
+    const btn = $('[data-form="pe-upload"] button[type=submit]');
+    btn.textContent = peBusy ? "업로드 중..." : peFiles.length ? `${peFiles.length}개 업로드` : "업로드";
+    btn.disabled = peBusy || !peFiles.length;
+  }
+  function addPhotos(files) {
+    let tooBig = 0;
+    for (const file of files) {
+      if (!/^(image|video)\//.test(file.type) || !file.size) continue;
+      if (file.size > PE_MAX_MB * 1024 * 1024) {
+        tooBig++;
+        continue;
+      }
+      peFiles.push({ file, url: URL.createObjectURL(file) });
+    }
+    if (tooBig) toast(`${PE_MAX_MB}MB가 넘는 파일 ${tooBig}개는 제외했어요.`);
+    paintPhotoEvent();
+  }
+  function removePhoto(i) {
+    const [p] = peFiles.splice(i, 1);
+    if (p) URL.revokeObjectURL(p.url);
+    paintPhotoEvent();
+  }
+  const toBase64 = (blob) =>
+    new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = () => resolve(String(r.result).split(",")[1]);
+      r.onerror = reject;
+      r.readAsDataURL(blob);
+    });
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  async function peRequest(body) {
+    if (!PE.url) throw new Error("photoEvent.url 이 비어 있습니다.");
+    const res = await fetch(PE.url, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(body) });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || "업로드 실패");
+    return data;
+  }
+  // 파일 하나를 조각내어 올린다. 조각이 실패하면 드라이브가 받은 위치를 다시 물어 이어서 보낸다.
+  async function uploadOne(file, onProgress) {
+    const { session } = await peRequest({ action: "start", name: peName, filename: file.name, mimeType: file.type, size: file.size });
+    let offset = 0;
+    let done = false;
+    let fails = 0;
+    while (!done) {
+      try {
+        const data = await toBase64(file.slice(offset, offset + PE_CHUNK));
+        const r = await peRequest({ action: "chunk", session, start: offset, total: file.size, data });
+        done = r.done;
+        offset = r.next ?? offset;
+        fails = 0;
+      } catch (e) {
+        if (++fails > 3) throw e;
+        await sleep(1500 * fails);
+        try {
+          const r = await peRequest({ action: "status", session, total: file.size });
+          done = r.done;
+          offset = r.next ?? offset;
+        } catch (_) {}
+      }
+      onProgress(done ? file.size : offset);
+    }
+  }
+  async function uploadPhotos(form) {
+    if (peBusy || !peFiles.length) return;
+    peName = new FormData(form).get("name").trim();
+    if (!peName) return toast("이름을 입력해 주세요.");
+    peBusy = true;
+    const total = peFiles.length;
+    const totalBytes = peFiles.reduce((n, p) => n + p.file.size, 0);
+    let sentBytes = 0;
+    const failed = [];
+    let lastError = "";
+    for (const [i, p] of peFiles.entries()) {
+      const show = (bytes) =>
+        paintPhotoEvent(`업로드 중... ${i + 1} / ${total} (${Math.floor(((sentBytes + bytes) / totalBytes) * 100)}%)`);
+      show(0);
+      try {
+        await uploadOne(p.file, show);
+        URL.revokeObjectURL(p.url);
+      } catch (e) {
+        failed.push(p);
+        lastError = e.message;
+      }
+      sentBytes += p.file.size;
+    }
+    peFiles = failed;
+    peBusy = false;
+    if (!failed.length) {
+      if (!$("#modal").hidden) closeModal();
+      return toast(`${total}개가 전달되었습니다. 감사합니다!`);
+    }
+    paintPhotoEvent(`${failed.length}개를 올리지 못했어요. 업로드를 다시 눌러주세요.\n(${lastError})`);
+    toast(`${total - failed.length}개 전달, ${failed.length}개 실패`);
+  }
+  // 올리는 도중 페이지를 벗어나려 하면 한 번 묻는다
+  window.addEventListener("beforeunload", (e) => {
+    if (!peBusy) return;
+    e.preventDefault();
+    e.returnValue = ""; // 크롬·사파리 등은 이 값이 있어야 묻는 창을 띄운다
+  });
+
   // ───────── 엔딩 ─────────
   function renderEnding() {
     $("#stamp").innerHTML = `
@@ -465,7 +622,7 @@
     $("#share").innerHTML = `
       <button type="button" class="share-link" data-action="kakao"><span class="kakao-ico">${ICON.kakao}</span>카카오톡으로 초대장 보내기</button>
       <button type="button" class="share-link" data-action="copy-link">${ICON.copy}링크 복사하기</button>`;
-    $("#footer").textContent = `© ${D.year} ${C.groom.firstName} & ${C.bride.firstName}`;
+    $("#footer").textContent = `© ${D.year - 1} ${C.groom.firstName} & ${C.bride.firstName}`;
   }
 
   // ───────── 공유 ─────────
@@ -601,16 +758,26 @@
         return openGuestbookWrite();
       case "gb-delete":
         return openGuestbookDelete(actEl.dataset.id);
+      case "pe-open":
+        return openPhotoEvent();
+      case "pe-remove":
+        return removePhoto(Number(actEl.dataset.i));
       case "gb-more":
         gbShown += GB.initialCount || 5;
         return paintGuestbook();
     }
   });
   document.addEventListener("submit", (e) => {
-    const form = e.target.closest("[data-form^='gb-']");
+    const form = e.target.closest("[data-form]");
     if (!form) return;
     e.preventDefault();
-    submitGuestbook(form);
+    if (form.dataset.form === "pe-upload") uploadPhotos(form);
+    else submitGuestbook(form);
+  });
+  document.addEventListener("change", (e) => {
+    if (!e.target.matches(".pe-add input")) return;
+    addPhotos(e.target.files);
+    e.target.value = ""; // 같은 사진을 다시 골라도 change 가 일어나게
   });
   $("#lightbox").addEventListener("click", (e) => {
     if (e.target.id === "lightbox") closeLightbox();
@@ -686,13 +853,14 @@
   renderGallery();
   renderAccount();
   renderGuestbook();
+  renderPhotoEvent();
   renderEnding();
   initKakao();
   initBgm();
   initFade();
 
   // 로컬에서 띄웠을 때만 갤러리 썸네일 편집기를 불러온다 (배포 사이트에서는 안 보임)
-  if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) {
+  if (IS_LOCAL) {
     window.WEDDING_GALLERY = { gSrc, thumbStyle };
     const s = document.createElement("script");
     s.src = "js/gallery-editor.js";
