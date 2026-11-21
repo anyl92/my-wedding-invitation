@@ -53,7 +53,7 @@ window.WEDDING = {
   // ───────── 사진 (images 폴더에 넣고 파일 이름만 바꾸세요) ─────────
   images: {
     cover: "images/cover.jpg",
-    middle1: "images/middle1.jpg",
+    middle1: "images/middle1-1.jpg",
     middle2: "images/middle2.jpg",
     ending: "images/ending.jpg",
     gallery: [
@@ -78,10 +78,10 @@ window.WEDDING = {
       { src: "images/gallery19.jpg", pos: "59% 78%", zoom: 1.15 },
       { src: "images/gallery20.jpg", pos: "50% 100%" },
       { src: "images/gallery21.jpg", pos: "95% 81%", zoom: 1.1 },
-      { src: "images/gallery22.jpg", pos: "50% 73%", zoom: 1.65 },
+      "images/gallery22.jpg",
       "images/gallery23.jpg",
-      "images/gallery24.jpg",
-      { src: "images/gallery25.jpg", pos: "58% 64%", zoom: 1.25 },
+      { src: "images/gallery24.jpg", pos: "58% 64%", zoom: 1.25 },
+      { src: "images/gallery25.jpg", pos: "0% 56%", zoom: 1.05 },
       { src: "images/gallery26.jpg", pos: "50% 73%" },
       { src: "images/gallery27.jpg", pos: "50% 71%", zoom: 1.15 },
       { src: "images/gallery28.jpg", pos: "0% 57%", zoom: 1.05 },
